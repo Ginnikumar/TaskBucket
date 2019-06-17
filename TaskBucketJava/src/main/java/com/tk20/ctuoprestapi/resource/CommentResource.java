@@ -11,10 +11,6 @@ import java.util.HashSet;
 
 import javax.sql.DataSource;
 
-import main.java.com.ExceptionHandlers.ApplicationException;
-import main.java.com.tk20.Entities.Comment;
-import main.java.com.tk20.services.SendEmail;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Throwables;
+
+import main.java.com.ExceptionHandlers.ApplicationException;
+import main.java.com.tk20.Entities.Comment;
+import main.java.com.tk20.services.SendEmail;
 
 @RestController
 @RequestMapping(path = "/task-bucket-api/tasks/{task_id}/comments")
@@ -152,7 +152,7 @@ public class CommentResource {
 				if (!emailSet.isEmpty())
 					emailSet.remove(userEmail);
 				if (!emailSet.isEmpty())
-					SendEmail.send(emailBody, emailSet, "support@taskbucket.in",
+					new SendEmail(emailBody, emailSet, "support@taskbucket.in",
 							"A new comment has been logged on your task - " + taskTitle);
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());

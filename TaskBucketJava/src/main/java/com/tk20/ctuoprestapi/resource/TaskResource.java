@@ -212,7 +212,7 @@ public class TaskResource {
 				pstmt3.close();
 
 			if (!emailSet.isEmpty())
-				SendEmail.send(emailBody, emailSet, "support@taskbucket.in",
+				new SendEmail(emailBody, emailSet, "support@taskbucket.in",
 						"A new task " + task.getTitle() + " is assigned to you.");
 
 		} catch (SQLException e) {
@@ -294,7 +294,7 @@ public class TaskResource {
 			}
 
 			if (!emailSet.isEmpty())
-				SendEmail.send(emailBody, emailSet, "support@taskbucket.in",
+				new SendEmail(emailBody, emailSet, "support@taskbucket.in",
 						"The task \"" + task.getTitle() + "\" is updated.");
 
 		} catch (SQLException e) {

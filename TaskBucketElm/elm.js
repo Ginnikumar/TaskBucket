@@ -7369,7 +7369,7 @@ var author$project$Main$renderCreateTaskView = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Description')
+								elm$html$Html$text('Notes: ')
 							])),
 						A2(
 						elm$html$Html$textarea,
@@ -8407,7 +8407,7 @@ var author$project$Main$renderShowEditTaskPanelView = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Description')
+								elm$html$Html$text('Notes: ')
 							])),
 						A2(
 						elm$html$Html$textarea,
