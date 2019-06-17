@@ -6016,7 +6016,7 @@ var author$project$Main$createCommentRequest = F3(
 				body: elm$http$Http$jsonBody(
 					A3(author$project$Main$createCommentEncoder, user, task, comment)),
 				expect: A2(elm$http$Http$expectJson, author$project$Main$CommentCreated, author$project$Main$commentDecoder),
-				url: 'https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks/' + (elm$core$String$fromInt(task.taskId) + '/comments')
+				url: 'http://172.15.3.11:9999/task-bucket-api/tasks/' + (elm$core$String$fromInt(task.taskId) + '/comments')
 			});
 	});
 var author$project$Main$TaskCreated = function (a) {
@@ -6142,7 +6142,7 @@ var author$project$Main$createTaskRequest = function (task) {
 			body: elm$http$Http$jsonBody(
 				author$project$Main$newTaskEncoder(task)),
 			expect: A2(elm$http$Http$expectJson, author$project$Main$TaskCreated, author$project$Main$taskDecoder),
-			url: 'https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks'
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks'
 		});
 };
 var author$project$Main$TaskDeleted = function (a) {
@@ -6190,7 +6190,7 @@ var author$project$Main$deleteTaskRequest = function (task) {
 			body: elm$http$Http$jsonBody(
 				author$project$Main$taskEncoder(task)),
 			expect: A2(elm$http$Http$expectJson, author$project$Main$TaskDeleted, author$project$Main$deleteMessageDecoder),
-			url: 'https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks/delete'
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks/delete'
 		});
 };
 var author$project$Main$CommentsFetched = function (a) {
@@ -6207,18 +6207,20 @@ var author$project$Main$getCommentsRequest = function (taskId) {
 	return elm$http$Http$get(
 		{
 			expect: A2(elm$http$Http$expectJson, author$project$Main$CommentsFetched, author$project$Main$commentListDecoder),
-			url: 'https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks/' + (elm$core$String$fromInt(taskId) + '/comments')
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks/' + (elm$core$String$fromInt(taskId) + '/comments')
 		});
 };
 var author$project$Main$TasksFetched = function (a) {
 	return {$: 'TasksFetched', a: a};
 };
 var author$project$Main$taskListDecoder = elm$json$Json$Decode$list(author$project$Main$taskDecoder);
-var author$project$Main$getTasksRequest = elm$http$Http$get(
-	{
-		expect: A2(elm$http$Http$expectJson, author$project$Main$TasksFetched, author$project$Main$taskListDecoder),
-		url: 'https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks'
-	});
+var author$project$Main$getTasksRequest = function (userId) {
+	return elm$http$Http$get(
+		{
+			expect: A2(elm$http$Http$expectJson, author$project$Main$TasksFetched, author$project$Main$taskListDecoder),
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks/' + elm$core$String$fromInt(userId)
+		});
+};
 var elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -6297,7 +6299,7 @@ var author$project$Main$userListDecoder = elm$json$Json$Decode$list(author$proje
 var author$project$Main$getUsersRequest = elm$http$Http$get(
 	{
 		expect: A2(elm$http$Http$expectJson, author$project$Main$UsersFetched, author$project$Main$userListDecoder),
-		url: 'https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/users'
+		url: 'http://172.15.3.11:9999/task-bucket-api/users'
 	});
 var author$project$Main$UserLoggedIn = function (a) {
 	return {$: 'UserLoggedIn', a: a};
@@ -6321,7 +6323,7 @@ var author$project$Main$logInUserRequest = function (loginUser) {
 			body: elm$http$Http$jsonBody(
 				author$project$Main$logInUserEncoder(loginUser)),
 			expect: A2(elm$http$Http$expectJson, author$project$Main$UserLoggedIn, author$project$Main$userDecoder),
-			url: 'https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/login'
+			url: 'http://172.15.3.11:9999/task-bucket-api/login'
 		});
 };
 var author$project$Main$TaskUpdated = function (a) {
@@ -6334,7 +6336,7 @@ var author$project$Main$updateTaskRequest = function (task) {
 			body: elm$http$Http$jsonBody(
 				author$project$Main$newTaskEncoder(task)),
 			expect: A2(elm$http$Http$expectJson, author$project$Main$TaskUpdated, author$project$Main$taskDecoder),
-			url: 'https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks/' + elm$core$String$fromInt(task.taskId)
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks/' + elm$core$String$fromInt(task.taskId)
 		});
 };
 var elm$core$Basics$neq = _Utils_notEqual;
@@ -6646,8 +6648,6 @@ var author$project$Main$update = F2(
 					var _n15 = A2(elm$core$Debug$log, 'Error TaskDeleted==', err);
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
-			case 'GetTasks':
-				return _Utils_Tuple2(model, author$project$Main$getTasksRequest);
 			case 'TasksFetched':
 				if (msg.a.$ === 'Ok') {
 					var tasks = msg.a.a;
@@ -6698,7 +6698,7 @@ var author$project$Main$update = F2(
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
 								[
-									author$project$Main$getTasksRequest,
+									author$project$Main$getTasksRequest(model.user.id),
 									author$project$Main$getCommentsRequest(comment.taskId)
 								])));
 				} else {
@@ -6838,7 +6838,7 @@ var author$project$Main$update = F2(
 					return elm$core$List$isEmpty(selectedOwnerIdList) ? temp2FilteredTaskList : A2(
 						elm$core$List$filter,
 						function (task) {
-							return A2(elm$core$List$member, task.created_by, selectedOwnerIdList);
+							return A2(elm$core$List$member, task.ownerId, selectedOwnerIdList);
 						},
 						temp2FilteredTaskList);
 				}();
@@ -6981,7 +6981,10 @@ var author$project$Main$update = F2(
 							{user: user}),
 						elm$core$Platform$Cmd$batch(
 							_List_fromArray(
-								[author$project$Main$getTasksRequest, author$project$Main$getUsersRequest])));
+								[
+									author$project$Main$getTasksRequest(user.id),
+									author$project$Main$getUsersRequest
+								])));
 				} else {
 					var err = msg.a.a;
 					var _n27 = A2(elm$core$Debug$log, 'Error UserLoggedIn===', err);
@@ -7369,7 +7372,7 @@ var author$project$Main$renderCreateTaskView = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Notes: ')
+								elm$html$Html$text('Notes')
 							])),
 						A2(
 						elm$html$Html$textarea,
@@ -7548,13 +7551,6 @@ var author$project$Main$renderCreateCommentView = function (model) {
 		_List_fromArray(
 			[
 				A2(
-				elm$html$Html$label,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text('Create Comment: ')
-					])),
-				A2(
 				elm$html$Html$textarea,
 				_List_fromArray(
 					[
@@ -7688,7 +7684,7 @@ var author$project$Main$renderTaskDetails = F2(
 							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('  Description: ')
+									elm$html$Html$text('Notes: ')
 								])),
 							A2(
 							elm$html$Html$span,
@@ -7796,7 +7792,7 @@ var author$project$Main$renderTaskDetails = F2(
 							_List_fromArray(
 								[
 									elm$html$Html$Attributes$title('Create Comment'),
-									elm$html$Html$Attributes$src('http://pngimg.com/uploads/plus/plus_PNG122.png'),
+									elm$html$Html$Attributes$src('/assets/Comment-add-icon.png'),
 									elm$html$Html$Attributes$width(30),
 									elm$html$Html$Attributes$height(30),
 									elm$html$Html$Events$onClick(
@@ -7904,29 +7900,27 @@ var author$project$Main$renderList = F2(
 																	]))
 															])),
 														A2(
-														elm$html$Html$button,
+														elm$html$Html$img,
 														_List_fromArray(
 															[
-																elm$html$Html$Attributes$class('delete1'),
 																elm$html$Html$Events$onClick(
-																author$project$Main$DeleteTask(l))
+																author$project$Main$DeleteTask(l)),
+																elm$html$Html$Attributes$src('/assets/trash.png'),
+																elm$html$Html$Attributes$width(30),
+																elm$html$Html$Attributes$height(30)
 															]),
-														_List_fromArray(
-															[
-																elm$html$Html$text('Delete')
-															])),
+														_List_Nil),
 														A2(
-														elm$html$Html$button,
+														elm$html$Html$img,
 														_List_fromArray(
 															[
-																elm$html$Html$Attributes$class('delete2'),
 																elm$html$Html$Events$onClick(
-																author$project$Main$ShowEditTaskPanel(l))
+																author$project$Main$ShowEditTaskPanel(l)),
+																elm$html$Html$Attributes$src('/assets/Pencil-icon.png'),
+																elm$html$Html$Attributes$width(30),
+																elm$html$Html$Attributes$height(30)
 															]),
-														_List_fromArray(
-															[
-																elm$html$Html$text('Edit')
-															]))
+														_List_Nil)
 													])),
 												l.showDetails ? A2(author$project$Main$renderTaskDetails, l, model) : elm$html$Html$text('')
 											]))
@@ -7975,7 +7969,7 @@ var author$project$Main$renderDashboard = function (model) {
 						(model.visibility === 'New') ? true : false),
 						A3(
 						author$project$Main$radio,
-						'In_Progress',
+						'In Progress',
 						author$project$Main$SwitchVisibility('InProgress'),
 						(model.visibility === 'InProgress') ? true : false),
 						A3(
@@ -8407,7 +8401,7 @@ var author$project$Main$renderShowEditTaskPanelView = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Notes: ')
+								elm$html$Html$text('Description')
 							])),
 						A2(
 						elm$html$Html$textarea,
@@ -8539,7 +8533,7 @@ var author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$text(
-								'Welcome : ' + A2(author$project$Main$getUserName, model.userList, model.user.id))
+								'Hi, ' + A2(author$project$Main$getUserName, model.userList, model.user.id))
 							])),
 						A2(
 						elm$html$Html$button,

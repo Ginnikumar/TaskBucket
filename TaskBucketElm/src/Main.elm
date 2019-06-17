@@ -211,7 +211,7 @@ type Msg
     | TaskCreated (Result Http.Error Task)
     | TaskUpdated (Result Http.Error Task)
     | TaskDeleted (Result Http.Error Message)
-    | GetTasks
+    --| GetTasks
     | TasksFetched  (Result Http.Error (List Task))
     | InputCommentText String
     | CancelComment
@@ -391,9 +391,9 @@ update msg model =
             _ = Debug.log "Error TaskDeleted==" err
           in
             ( model, Cmd.none )
-        GetTasks ->
-            --log "Value ==" title
-            (model, getTasksRequest )
+        -- GetTasks ->
+        --     --log "Value ==" title
+        --     (model, getTasksRequest )
         TasksFetched (Ok tasks) ->
             ( {model | taskList = tasks, filteredTaskList = tasks}, Cmd.none )
 
@@ -420,7 +420,7 @@ update msg model =
           let
             _ = Debug.log "Ok comment : " comment
           in
-            ( {model | renderView ="Dashboard" }, Cmd.batch [ getTasksRequest, getCommentsRequest comment.taskId] )
+            ( {model | renderView ="Dashboard" }, Cmd.batch [ getTasksRequest model.user.id, getCommentsRequest comment.taskId] )
 
         CommentCreated (Err err) ->
           let
@@ -516,7 +516,7 @@ update msg model =
                   then
                     temp2FilteredTaskList
                   else
-                    List.filter (\task -> List.member task.created_by selectedOwnerIdList) temp2FilteredTaskList
+                    List.filter (\task -> List.member task.ownerId selectedOwnerIdList) temp2FilteredTaskList
 
             temp4FilteredTaskList =
               if model.filterValues.last_comment_date == "" then
@@ -609,7 +609,7 @@ update msg model =
         Login ->
           (model, logInUserRequest model.loginUser)
         UserLoggedIn  (Ok user) ->
-            ( {model | user = user}, Cmd.batch [ getTasksRequest, getUsersRequest ] )
+            ( {model | user = user}, Cmd.batch [ getTasksRequest user.id, getUsersRequest ] )
 
         UserLoggedIn (Err err) ->
           let
@@ -659,8 +659,9 @@ renderList lst model =
                                         [ label [] [ text "  Commented On: " ]
                                         , span [] [ text l.commentedOn ]
                                         ]
-                                , button [ class "delete1", onClick (DeleteTask l) ] [ text "Delete" ]
-                                , button [ class "delete2", onClick (ShowEditTaskPanel l) ] [ text "Edit" ]
+                                , img [ onClick (DeleteTask l), src "/assets/trash.png", width 30, height 30 ][]
+                                , img [onClick (ShowEditTaskPanel l),src "/assets/Pencil-icon.png", width 30, height 30 ][]
+
                                 ]
                             --, button [ class "button-tertiary", onClick (AddComment (defaultComment model.user l))][text "Add Comment"]]
                             --, button [ class "button-tertiary", onClick (CreateComment l) ][text "Add Comment"]
@@ -713,7 +714,7 @@ renderTaskDetails task model =
   in
       div []
         [ div []
-            [ label [] [text "  Description: "]
+            [ label [] [text "Notes: "]
             , span [] [text (task.description)]
             , div [][ label [][ text "Owner: "]
             , label [] [text (getUserName model.userList task.ownerId)]]
@@ -727,7 +728,7 @@ renderTaskDetails task model =
            --, a [onClick (ShowTaskDetails task)] [text task.title]
            --, div[class "button-collection"][button [ onClick (DeleteTask task.taskId)] [text "Delete"]
            --, button [ class "button", onClick (AddComment (defaultComment model.user l))][text "Add Comment"]]
-           , if model.renderView == "CreateComment" then div [ ][ renderCreateCommentView model ] else div [][ img [title "Create Comment", src "http://pngimg.com/uploads/plus/plus_PNG122.png", width 30, height 30, onClick (CreateComment task)] []]
+           , if model.renderView == "CreateComment" then div [ ][ renderCreateCommentView model ] else div [][ img [title "Create Comment", src "/assets/Comment-add-icon.png", width 30, height 30, onClick (CreateComment task)] []]
            , renderTaskComments model.commentList model.userList  --button [ class "button", onClick (FetchComments task)][text "Show Comments"]
            ]
            -- ,div[class "body"][
@@ -788,7 +789,7 @@ view model =
   if isUserNotLoggedIn then loginView model else div[][
     div[class "header"][
     h1 [class "headerStyle"] [ text "Task bucket" ]
-    , h2 [class "headerStyle"] [ text ("Welcome : " ++ (getUserName model.userList model.user.id)) ]
+    , h2 [class "headerStyle"] [ text ("Hi, " ++ (getUserName model.userList model.user.id)) ]
     , button [ onClick CreateTask, class "btn-secondary" ] [text "Create Task"]
     , button [ onClick ShowFilterPanel, class "btn-secondary" ] [text "Filter Tasks"]
     , button [ onClick LogOut ] [text "LogOut"]
@@ -831,7 +832,7 @@ renderDashboard model =
         , div [class "filter"]
               [ radio "All" (SwitchVisibility "All") (if model.visibility == "All" then True else False)
               , radio "New" (SwitchVisibility "New") (if model.visibility == "New" then True else False)
-              , radio "In_Progress" (SwitchVisibility "InProgress") (if model.visibility == "InProgress" then True else False)
+              , radio "In Progress" (SwitchVisibility "InProgress") (if model.visibility == "InProgress" then True else False)
               , radio "Completed" (SwitchVisibility "Completed") (if model.visibility == "Completed" then True else False)
               , radio "Cancelled" (SwitchVisibility "Cancelled") (if model.visibility == "Cancelled" then True else False)
               ]
@@ -863,7 +864,7 @@ renderCreateTaskView model =
               , value model.newTask.title
               ]
               []]
-      , div[class "fieldset"][label [] [text "Description"]
+      , div[class "fieldset"][label [] [text "Notes"]
       , textarea [ onInput InputDescription , value model.newTask.description
               ]
               []
@@ -951,7 +952,7 @@ renderFilterView model =
 createTaskRequest : Task -> Cmd Msg
 createTaskRequest task =
     Http.post
-        { url = "https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks"
+        { url = "http://172.15.3.11:9999/task-bucket-api/tasks"
         , body = Http.jsonBody (newTaskEncoder task)
         , expect = Http.expectJson TaskCreated taskDecoder
         --, timeout = Nothing
@@ -964,17 +965,17 @@ updateTaskRequest task =
       _ = Debug.log "task in updateTaskRequest ===" task
     in
       Http.post
-        { url = "https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks/"++ String.fromInt(task.taskId)
+        { url = "http://172.15.3.11:9999/task-bucket-api/tasks/"++ String.fromInt(task.taskId)
         , body = Http.jsonBody (newTaskEncoder task)
         , expect = Http.expectJson TaskUpdated taskDecoder
         --, timeout = Nothing
         --, withCredentials = False
         }
 
-getTasksRequest : Cmd Msg
-getTasksRequest =
+getTasksRequest : Int ->  Cmd Msg
+getTasksRequest userId =
   Http.get
-      { url = "https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks"
+      { url = "http://172.15.3.11:9999/task-bucket-api/tasks/" ++ String.fromInt(userId)
       , expect = Http.expectJson TasksFetched taskListDecoder
       --, timeout = Nothing
       --, withCredentials = False
@@ -1050,7 +1051,7 @@ defaultComment  user task =
 createCommentRequest : User -> Task -> Comment -> Cmd Msg
 createCommentRequest user task comment =
    Http.post
-       { url = "https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks/"++ String.fromInt(task.taskId) ++"/comments"
+       { url = "http://172.15.3.11:9999/task-bucket-api/tasks/"++ String.fromInt(task.taskId) ++"/comments"
        , body = Http.jsonBody (createCommentEncoder user task comment)
        , expect = Http.expectJson CommentCreated commentDecoder
        }
@@ -1076,14 +1077,14 @@ getCommentsRequest : Int -> Cmd Msg
 getCommentsRequest taskId =
  Http.get
      {
-     url = "https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks/" ++ String.fromInt(taskId) ++"/comments"
+     url = "http://172.15.3.11:9999/task-bucket-api/tasks/" ++ String.fromInt(taskId) ++"/comments"
      , expect = Http.expectJson CommentsFetched commentListDecoder
      }
 
 deleteTaskRequest : Task -> Cmd Msg
 deleteTaskRequest task =
     Http.post
-        { url = "https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/tasks/delete"
+        { url = "http://172.15.3.11:9999/task-bucket-api/tasks/delete"
         , body = Http.jsonBody (taskEncoder task)
         , expect = Http.expectJson TaskDeleted deleteMessageDecoder
         --, timeout = Nothing
@@ -1096,8 +1097,9 @@ commentListDecoder = Json.list commentDecoder
 renderCreateCommentView: Model -> Html Msg
 renderCreateCommentView model =
  div []
-     [ label [] [ text "Create Comment: " ]
-     , textarea [ onInput InputCommentText
+     [ --label [] [ text "Create Comment: " ]
+     --,
+     textarea [ onInput InputCommentText
              ]
              []
      , button [ onClick (AddComment model.currentComment model.newTask)] [text "Create"]
@@ -1125,7 +1127,7 @@ logInUserEncoder loginUser =
 logInUserRequest : LoginUser -> Cmd Msg
 logInUserRequest loginUser =
     Http.post
-        { url = "https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/login"
+        { url = "http://172.15.3.11:9999/task-bucket-api/login"
         , body = Http.jsonBody (logInUserEncoder loginUser)
         , expect = Http.expectJson UserLoggedIn userDecoder
         --, timeout = Nothing
@@ -1135,7 +1137,7 @@ logInUserRequest loginUser =
 getUsersRequest : Cmd Msg
 getUsersRequest =
  Http.get
-     { url = "https://reportstesting1.tk20.com/taskbucketapi/task-bucket-api/users"
+     { url = "http://172.15.3.11:9999/task-bucket-api/users"
      , expect = Http.expectJson UsersFetched userListDecoder
      }
 
