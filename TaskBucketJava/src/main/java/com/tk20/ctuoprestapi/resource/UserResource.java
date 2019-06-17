@@ -107,6 +107,14 @@ public class UserResource {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+		} finally {
+			try {
+				if (pstmt2 != null)
+					pstmt2.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+			}
 		}
 		return user;
 	}
@@ -130,6 +138,7 @@ public class UserResource {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+		} finally {
 		}
 	}
 

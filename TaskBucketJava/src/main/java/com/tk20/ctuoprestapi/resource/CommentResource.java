@@ -60,8 +60,8 @@ public class CommentResource {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
 		}
 
 		finally {
@@ -100,9 +100,9 @@ public class CommentResource {
 				pstmt2.executeUpdate();
 
 				String commentQuery = "select * from comments where id=" + id + ";";
-				pstmt2 = conn.prepareStatement(commentQuery);
+				PreparedStatement preparedStatement = conn.prepareStatement(commentQuery);
 				// pstmt.setInt(1, user_id);
-				commentCursor = pstmt2.executeQuery();
+				commentCursor = preparedStatement.executeQuery();
 				comment = new Comment();
 				while (commentCursor.next()) {
 					comment.setId(commentCursor.getInt("id"));
@@ -158,17 +158,26 @@ public class CommentResource {
 				System.out.println(e.getMessage());
 				throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
 			} finally {
-				if (commentCursor != null)
-					try {
+				try {
+					if (pstmt2 != null)
+						pstmt2.close();
+					if (pstmt3 != null)
+						pstmt3.close();
+					if (commentCursor != null)
 						commentCursor.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					if (ownerAndContrinutorCursor != null)
+						ownerAndContrinutorCursor.close();
+					if (activeUserCursor != null)
+						activeUserCursor.close();
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+					throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+				}
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			throw new ApplicationException(Throwables.getStackTraceAsString(e1), e1.getMessage());
 		}
 		return comment;
 	}
