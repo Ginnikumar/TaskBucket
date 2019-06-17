@@ -18,6 +18,13 @@ body{
   justify-content: space-between;
   color: #fff;
   vertical-align: middle;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  top: 0;
+}
+.header + .panel{
+  margin-top: 80px;
 }
 .header button{
   min-width: 101px;
@@ -40,8 +47,10 @@ button.primary{
   border: 1px solid #575195;
   color: #fff;
 }
-
-.fieldset input,.fieldset textarea{
+.fieldset label{
+  display: block;
+}
+.fieldset input,.fieldset textarea,.loginPage input,.createComment textarea{
 	border:1px solid #c5c7c9;
 	padding: 10px 7px;
     color: #111;
@@ -50,7 +59,7 @@ button.primary{
     max-width:200px;
     border-radius:3px;
 }
-.fieldset input:focus,.fieldset textarea:focus{
+.fieldset input:focus,.fieldset textarea:focus,.loginPage input:focus,.createComment textarea:focus{
 	box-shadow:0px 0px 8px #ddd;
 	border-color:#555;
 }
@@ -82,6 +91,7 @@ button.primary{
   min-height: 497px;
   background: #fff;
       box-shadow: 0px 0px 5px #aaa;
+      min-width: 250px;
 }
 .mini-panel.hide{
   display: none;
@@ -116,6 +126,7 @@ textarea{
 }
 .list-header{
   position: relative;
+  cursor: pointer;
 }
 .list-item .list-header label{
 	font-weight:bold;
@@ -145,13 +156,13 @@ textarea{
 	text-align:center;
 }
 .list-item .list-header .status .New{
-	background-color: green;
+	background-color: #f8b50a;
 }
 .list-item .list-header .status .In-Progress{
-	background-color: #608fca;
+  background-color: green;
 }
 .list-item .list-header .status .Completed{
-	background-color: #b70404;
+	background-color: #575195;
 }
 .list-item .list-header .status .Cancelled{
 	background-color: grey;
@@ -259,4 +270,166 @@ textarea{
  font-weight: bold;
  color: #575195;
  font-size: 43px;
+ margin-bottom: 30px;
+}
+.loginPage{
+  text-align: center;
+  width: 500px;
+  background-color: #fff;
+  margin:80px auto;
+  padding: 20px;
+  box-shadow: 0px 0px 10px #ddd;
+}
+.loginPage input{
+  margin-left: 10px;
+}
+.loginImg img{
+  width: 180px;
+  height: auto;
+}
+.loginPage button{
+  background-color:#575195;
+  border-color: #575195;
+  color: #fff;
+  min-width: 110px;
+}
+.actions{
+  float: right;
+}
+.actions img{
+  width: 20px;
+  margin-left: 10px;
+  height: auto;
+}
+.list-block{
+  font-size: 13px;
+  line-height: 24px;
+  margin-top: 10px;
+}
+
+.listAction,.listContent{
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+.listAction{
+  float: right;
+  position: absolute;
+  right: 5px;
+  top: -4px;
+  background: none transparent;
+}
+.ownerDetails{
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f7f7f7;
+}
+.ownerDetails .detailsPart{
+  float: right;
+}
+.listAction{
+  float: right;
+}
+.listContent .detailsPart
+{
+  float: right;
+}
+.createComment{
+  display: block;
+  margin-top: 20px;
+}
+.createComment .btn-group{
+  display: block;
+}
+.commentSection{
+  margin-top: 20px;
+}
+.comment-list-item img,.comment-list-item textarea{
+  display: inline-block;
+}
+.comment-list-item textarea{
+  margin-left: 10px;
+}
+.ownerPart{
+  display: inline-block;
+}
+.comment-list-item textarea{
+  max-width: 400px;
+}
+.comment-list-item img {
+    position: relative;
+    top: 0px;
+    width: 35px;
+    height: 35px;
+    border-radius: 100px;
+}
+.comment-list-header{
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+.comment-list-header > div > div:last-child{
+  margin-left: 50px;
+  font-style: italic;
+  color: #999;
+}
+.list-block{
+  position: relative;
+}
+.filter1{
+  margin-bottom: 20px;
+}
+.filter1 label{
+  display: inline-block;
+}
+.filter1 input{
+  visibility: hidden;
+  position: absolute;
+}
+.filter1 span{
+  display: inline-block;
+  padding: 5px;
+  background-color: #f5f5f5;
+  position: relative;
+  font-size: 12px;
+  border-right: 1px solid #ddd;
+}
+.filter1 label:first-child span{
+  border-radius: 3px 0px 0px 3px;
+}
+.filter1 label:last-child span{
+  border-radius: 0px 3px 3px 0px;
+  border-right: none;
+}
+.filter1 span b{
+  font-weight: normal;
+  position: relative;
+}
+.filter1 label input[type="radio"]:checked + span:before{
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #575195;
+  top: 0;
+  left: 0;
+}
+.filter1 label:first-child input[type="radio"]:checked + span:before{
+  border-radius:3px 0px 0px 3px;
+}
+.filter1 label:last-child input[type="radio"]:checked + span:before{
+  border-radius: 0px 3px 3px 0px;
+}
+.filter1 input[type="radio"]:checked + span b{
+  color: #fff;
+}
+.showComment{
+  border: 1px solid #ddd;
+background-color: #ebebe4;
+color: #545454;
+display: inline-block;
+margin-left: 10px;
+padding: 10px;
+border-radius: 10px;
+max-width: 400px;
+vertical-align: top;
 }
