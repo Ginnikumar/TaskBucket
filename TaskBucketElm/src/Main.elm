@@ -651,6 +651,10 @@ renderList lst model =
                                 , div [ class "status" ]
                                     [ span [ class (getStatus l.status) ] [ text (getStatus l.status) ]
                                     ]
+                                , div[class "actions"][
+                                  img [ onClick (DeleteTask l), src "/assets/trash.png", width 30, height 30 ][]
+                                  , img [onClick (ShowEditTaskPanel l),src "/assets/Pencil-icon.png", width 30, height 30 ][]
+                                ]
                                 , if l.commentedOn == ""
                                     then
                                       text ""
@@ -659,8 +663,6 @@ renderList lst model =
                                         [ label [] [ text "  Commented On: " ]
                                         , span [] [ text l.commentedOn ]
                                         ]
-                                , img [ onClick (DeleteTask l), src "/assets/trash.png", width 30, height 30 ][]
-                                , img [onClick (ShowEditTaskPanel l),src "/assets/Pencil-icon.png", width 30, height 30 ][]
 
                                 ]
                             --, button [ class "button-tertiary", onClick (AddComment (defaultComment model.user l))][text "Add Comment"]]
@@ -680,15 +682,15 @@ renderList lst model =
 
 renderTaskComments : List Comment -> List User -> Html msg
 renderTaskComments comments userList =
-        ol []
+        ol [ class "commentSection"]
         (List.map
             (\comment ->
                 li []
-                    [ div [ class "list-item" ]
-                        [ div [ class "list-header" ]
+                    [ div [ class "comment-list-item" ]
+                        [ div [ class "comment-list-header" ]
                             [ div []
                                 [ img [src (getUserImgUrl userList comment.createdBy), width 30, height 30] []
-                                , textarea [disabled True] [ text comment.text ]
+                                , div [class "showComment"] [ text comment.text ]
                                 , div []
                                     [
                                     -- text "Added by "
@@ -712,25 +714,33 @@ renderTaskDetails task model =
   let
     _ = Debug.log "task details===" task
   in
-      div []
-        [ div []
+      div [ class "list-block"]
+        [ div [ class "listContent"]
             [ label [] [text "Notes: "]
             , span [] [text (task.description)]
-            , div [][ label [][ text "Owner: "]
-            , label [] [text (getUserName model.userList task.ownerId)]]
-            , div [][ label [][ text "  Due Date: "]
-            , label [] [text task.due_date]]
-            , div [] [ label [][ text "  Created By: "]
-            , label [] [text (getUserName model.userList task.created_by)]]
-            , div [][ label [][ text "  Created On: "]
-            , label [] [text task.createdOn]]
             ]
            --, a [onClick (ShowTaskDetails task)] [text task.title]
            --, div[class "button-collection"][button [ onClick (DeleteTask task.taskId)] [text "Delete"]
            --, button [ class "button", onClick (AddComment (defaultComment model.user l))][text "Add Comment"]]
-           , if model.renderView == "CreateComment" then div [ ][ renderCreateCommentView model ] else div [][ img [title "Create Comment", src "/assets/Comment-add-icon.png", width 30, height 30, onClick (CreateComment task)] []]
+           , if model.renderView == "CreateComment" then div [class "createComment"][ renderCreateCommentView model ] else div [class "listAction"][ img [title "Create Comment", src "/assets/Comment-add-icon.png", width 30, height 30, onClick (CreateComment task)] []]
+           , div[class "ownerDetails"][
+            div[class "ownerPart"][
+            div [][ label [][ text "Owner: "]
+           , label [] [text (getUserName model.userList task.ownerId)]]
+           , div [][ label [][ text "  Due Date: "]
+           , label [] [text task.due_date]]
+           ]
+             , div[class "detailsPart"][
+               div [] [ label [][ text "  Created By: "]
+               , label [] [text (getUserName model.userList task.created_by)]]
+               , div [][ label [][ text "  Created On: "]
+               , label [] [text task.createdOn]]
+             ]
+
+           ]
            , renderTaskComments model.commentList model.userList  --button [ class "button", onClick (FetchComments task)][text "Show Comments"]
            ]
+
            -- ,div[class "body"][
            --   text "body here"
            -- ]
@@ -805,16 +815,15 @@ view model =
 
 loginView : Model -> Html Msg
 loginView model =
-  div []
-    [ div [][ img [src "/assets/WTM_logo.jpg", width 300, height 300] []]
+  div [class "loginPage"]
+    [ div [ class "loginImg"][ img [src "/assets/WTM_logo.jpg", width 300, height 300] []]
     , span [class "taskBucket"][ text "Task Bucket"]
-    , div [][ label [] [text "UserName: "]
-    , input [  placeholder "Enter Your Email Id"
-            , onInput EnterUseEmail
+    , div [][ label [] [text "UserName "]
+    , input [ onInput EnterUseEmail
             , value model.loginUser.userEmail
             ]
             []]
-    , div [] [label [] [text "Password: "]
+    , div [] [label [] [text "Password "]
     , input [ onInput EnterUserPassword
             , type_ "password"
             , value model.loginUser.userPassword
@@ -851,7 +860,7 @@ radio value msg isChecked=
               , name "visibilty-check"
               , onClick msg
             ] []
-    , text value
+    , span[][ b[][text value]]
     ]
 
 renderCreateTaskView: Model -> Html Msg
@@ -897,7 +906,7 @@ renderShowEditTaskPanelView model =
             , radio "Completed" (UpdateTaskStatus 2) (if model.newTask.status == 2 then True else False)
             , radio "Cancelled" (UpdateTaskStatus 3) (if model.newTask.status == 3 then True else False)
             ]
-      , div[class "fieldset"][label [] [text "Description"]
+      , div[class "fieldset"][label [] [text "Notes"]
       , textarea [ onInput InputDescription , value model.newTask.description
               ]
               []
@@ -1102,8 +1111,11 @@ renderCreateCommentView model =
      textarea [ onInput InputCommentText
              ]
              []
-     , button [ onClick (AddComment model.currentComment model.newTask)] [text "Create"]
-     , button [ onClick CancelComment ] [text "Cancel"]
+             ,div[class "btn-group"][
+             button [ onClick (AddComment model.currentComment model.newTask)] [text "Create"]
+             , button [ onClick CancelComment ] [text "Cancel"]
+             ]
+
      ]
 
 userDecoder : Json.Decoder User
