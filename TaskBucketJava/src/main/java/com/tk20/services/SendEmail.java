@@ -10,9 +10,23 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class SendEmail {
-	public static void send(String messageString, HashSet<String> emailIdSet,
-			String sender, String subject) {
+public class SendEmail extends Thread {
+	String messageString;
+	HashSet<String> emailIdSet;
+	String sender;
+	String subject;
+
+	public SendEmail(String messageString, HashSet<String> emailIdSet, String sender, String subject) {
+		super();
+		this.messageString = messageString;
+		this.emailIdSet = emailIdSet;
+		this.sender = sender;
+		this.subject = subject;
+		this.start();
+	}
+
+	public void run() {
+		System.out.println("Sending email  " + this.messageString);
 
 		// Assuming you are sending email from localhost
 		String host = "mail.tk20.com";
@@ -31,21 +45,20 @@ public class SendEmail {
 			MimeMessage message = new MimeMessage(session);
 
 			// Set From: header field of the header.
-			message.setFrom(new InternetAddress(sender));
+			message.setFrom(new InternetAddress(this.sender));
 
 			// Set To: header field of the header.
-			for (String emailId : emailIdSet) {
-				message.addRecipient(Message.RecipientType.TO,
-						new InternetAddress(emailId));
+			for (String emailId : this.emailIdSet) {
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailId));
 			}
 			// message.addRecipient(Message.RecipientType.TO,
 			// new InternetAddress(to1));
 
 			// Set Subject: header field
-			message.setSubject(subject);
+			message.setSubject(this.subject);
 
 			// Now set the actual message
-			message.setContent(messageString, "text/html");
+			message.setContent(this.messageString, "text/html");
 
 			// Send message
 			Transport.send(message);

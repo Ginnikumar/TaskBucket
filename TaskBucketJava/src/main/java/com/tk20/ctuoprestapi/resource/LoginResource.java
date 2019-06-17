@@ -43,8 +43,7 @@ public class LoginResource {
 		ResultSet userCursor = null;
 		try (Connection conn = this.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			userCursor = pstmt.executeQuery();
-			if (userCursor.next())
-			{
+			if (userCursor.next()) {
 				if (!user.getPwd().equals(userCursor.getString("pwd")))
 					throw new BadPasswordError();
 				user.setId(userCursor.getInt("id"));
@@ -53,12 +52,21 @@ public class LoginResource {
 				user.setCreatetime(userCursor.getTimestamp("createtime"));
 				user.setRole(userCursor.getString("role"));
 				user.setImageurl(userCursor.getString("imageURL"));
-			}
-			else
+			} else
 				throw new UserNotFound();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+		}
+
+		finally {
+			if (userCursor != null)
+				try {
+					userCursor.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+				}
 		}
 		return user;
 	}

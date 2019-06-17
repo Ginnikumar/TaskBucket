@@ -11,10 +11,6 @@ import java.util.HashSet;
 
 import javax.sql.DataSource;
 
-import main.java.com.ExceptionHandlers.ApplicationException;
-import main.java.com.tk20.Entities.Comment;
-import main.java.com.tk20.services.SendEmail;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Throwables;
+
+import main.java.com.ExceptionHandlers.ApplicationException;
+import main.java.com.tk20.Entities.Comment;
+import main.java.com.tk20.services.SendEmail;
 
 @RestController
 @RequestMapping(path = "/task-bucket-api/tasks/{task_id}/comments")
@@ -60,8 +60,8 @@ public class CommentResource {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
 		}
 
 		finally {
@@ -100,9 +100,9 @@ public class CommentResource {
 				pstmt2.executeUpdate();
 
 				String commentQuery = "select * from comments where id=" + id + ";";
-				pstmt2 = conn.prepareStatement(commentQuery);
+				PreparedStatement preparedStatement = conn.prepareStatement(commentQuery);
 				// pstmt.setInt(1, user_id);
-				commentCursor = pstmt2.executeQuery();
+				commentCursor = preparedStatement.executeQuery();
 				comment = new Comment();
 				while (commentCursor.next()) {
 					comment.setId(commentCursor.getInt("id"));
@@ -152,23 +152,32 @@ public class CommentResource {
 				if (!emailSet.isEmpty())
 					emailSet.remove(userEmail);
 				if (!emailSet.isEmpty())
-					SendEmail.send(emailBody, emailSet, "support@taskbucket.in",
+					new SendEmail(emailBody, emailSet, "support@taskbucket.in",
 							"A new comment has been logged on your task - " + taskTitle);
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 				throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
 			} finally {
-				if (commentCursor != null)
-					try {
+				try {
+					if (pstmt2 != null)
+						pstmt2.close();
+					if (pstmt3 != null)
+						pstmt3.close();
+					if (commentCursor != null)
 						commentCursor.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					if (ownerAndContrinutorCursor != null)
+						ownerAndContrinutorCursor.close();
+					if (activeUserCursor != null)
+						activeUserCursor.close();
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+					throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+				}
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			throw new ApplicationException(Throwables.getStackTraceAsString(e1), e1.getMessage());
 		}
 		return comment;
 	}

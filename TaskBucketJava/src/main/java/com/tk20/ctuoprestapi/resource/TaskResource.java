@@ -26,12 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Throwables;
 
 import main.java.com.ExceptionHandlers.ApplicationException;
-import main.java.com.ExceptionHandlers.BadPasswordError;
 import main.java.com.ExceptionHandlers.InvalidMethodRequestException;
 import main.java.com.ExceptionHandlers.UserNotFound;
 import main.java.com.tk20.Entities.Contributor;
 import main.java.com.tk20.Entities.Task;
-import main.java.com.tk20.Entities.User;
 import main.java.com.tk20.services.Logger;
 import main.java.com.tk20.services.SendEmail;
 
@@ -89,9 +87,9 @@ public class TaskResource {
 			}
 
 			PreparedStatement pstmt = con.prepareStatement(taskQuery);
-			System.out.println("Get Query Created..");
+			System.out.println("getTasks Created..");
 			taskCursor = pstmt.executeQuery();
-			System.out.println("Get Query Executed..");
+			System.out.println("getTasks Executed..");
 			Task task = null;
 			ResultSet contibutorCursor = null;
 			ArrayList<Contributor> contributorList = null;
@@ -121,8 +119,8 @@ public class TaskResource {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
 		}
 
 		finally {
@@ -214,13 +212,26 @@ public class TaskResource {
 				pstmt3.close();
 
 			if (!emailSet.isEmpty())
-				SendEmail.send(emailBody, emailSet, "support@taskbucket.in",
+				new SendEmail(emailBody, emailSet, "support@taskbucket.in",
 						"A new task " + task.getTitle() + " is assigned to you.");
 
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
 		} finally {
+			try {
+				if (pstmt2 != null)
+					pstmt2.close();
+				if (pstmt3 != null)
+					pstmt3.close();
+				if (taskCursor != null)
+					taskCursor.close();
+				if (ownerAndContrinutorCursor != null)
+					ownerAndContrinutorCursor.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+			}
 
 		}
 		return task;
@@ -254,16 +265,17 @@ public class TaskResource {
 
 				String insertSQL = "INSERT INTO task_user (owner, tasks, createtime, updatetime ) VALUES (?, ?, now(),now())";
 				try {
-					pstmt2 = conn.prepareStatement(insertSQL);
+					PreparedStatement preparedStatement = conn.prepareStatement(insertSQL);
 					for (Contributor contributor : task.getContributorList()) {
-						pstmt2.setInt(1, contributor.getContributor());
-						pstmt2.setInt(2, task.getCreated_by());
-						pstmt2.addBatch();
+						preparedStatement.setInt(1, contributor.getContributor());
+						preparedStatement.setInt(2, task.getCreated_by());
+						preparedStatement.addBatch();
 					}
-					pstmt2.executeBatch(); // insert remaining records
-					pstmt2.close();
+					preparedStatement.executeBatch();
+					preparedStatement.close();
 				} catch (Exception e) {
 					e.printStackTrace();
+					throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
 				}
 			}
 
@@ -281,16 +293,26 @@ public class TaskResource {
 				emailSet.add(ownerAndContrinutorCursor.getString("email"));
 			}
 
-			if (pstmt3 != null)
-				pstmt3.close();
-
 			if (!emailSet.isEmpty())
-				SendEmail.send(emailBody, emailSet, "support@taskbucket.in",
+				new SendEmail(emailBody, emailSet, "support@taskbucket.in",
 						"The task \"" + task.getTitle() + "\" is updated.");
 
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+		} finally {
+			try {
+				if (pstmt2 != null)
+					pstmt2.close();
+				if (pstmt3 != null)
+					pstmt3.close();
+				if (ownerAndContrinutorCursor != null)
+					ownerAndContrinutorCursor.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+			}
+
 		}
 		return task;
 	}
@@ -318,8 +340,19 @@ public class TaskResource {
 			pstmt2.executeUpdate();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+		} finally {
+			try {
+				if (pstmt2 != null)
+					pstmt2.close();
+				if (pstmt3 != null)
+					pstmt3.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new ApplicationException(Throwables.getStackTraceAsString(e), e.getMessage());
+			}
+
 		}
 		return task.getId();
 	}
