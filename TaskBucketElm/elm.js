@@ -6016,7 +6016,7 @@ var author$project$Main$createCommentRequest = F3(
 				body: elm$http$Http$jsonBody(
 					A3(author$project$Main$createCommentEncoder, user, task, comment)),
 				expect: A2(elm$http$Http$expectJson, author$project$Main$CommentCreated, author$project$Main$commentDecoder),
-				url: 'http://localhost:8000/task-bucket-api/tasks/' + (elm$core$String$fromInt(task.taskId) + '/comments')
+				url: 'http://172.15.3.11:9999/task-bucket-api/tasks/' + (elm$core$String$fromInt(task.taskId) + '/comments')
 			});
 	});
 var author$project$Main$TaskCreated = function (a) {
@@ -6142,7 +6142,7 @@ var author$project$Main$createTaskRequest = function (task) {
 			body: elm$http$Http$jsonBody(
 				author$project$Main$newTaskEncoder(task)),
 			expect: A2(elm$http$Http$expectJson, author$project$Main$TaskCreated, author$project$Main$taskDecoder),
-			url: 'http://localhost:8000/task-bucket-api/tasks'
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks'
 		});
 };
 var author$project$Main$TaskDeleted = function (a) {
@@ -6190,7 +6190,7 @@ var author$project$Main$deleteTaskRequest = function (task) {
 			body: elm$http$Http$jsonBody(
 				author$project$Main$taskEncoder(task)),
 			expect: A2(elm$http$Http$expectJson, author$project$Main$TaskDeleted, author$project$Main$deleteMessageDecoder),
-			url: 'http://localhost:8000/task-bucket-api/tasks/delete'
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks/delete'
 		});
 };
 var author$project$Main$CommentsFetched = function (a) {
@@ -6207,7 +6207,7 @@ var author$project$Main$getCommentsRequest = function (taskId) {
 	return elm$http$Http$get(
 		{
 			expect: A2(elm$http$Http$expectJson, author$project$Main$CommentsFetched, author$project$Main$commentListDecoder),
-			url: 'http://localhost:8000/task-bucket-api/tasks/' + (elm$core$String$fromInt(taskId) + '/comments')
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks/' + (elm$core$String$fromInt(taskId) + '/comments')
 		});
 };
 var author$project$Main$TasksFetched = function (a) {
@@ -6217,7 +6217,7 @@ var author$project$Main$taskListDecoder = elm$json$Json$Decode$list(author$proje
 var author$project$Main$getTasksRequest = elm$http$Http$get(
 	{
 		expect: A2(elm$http$Http$expectJson, author$project$Main$TasksFetched, author$project$Main$taskListDecoder),
-		url: 'http://localhost:8000/task-bucket-api/tasks'
+		url: 'http://172.15.3.11:9999/task-bucket-api/tasks'
 	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -6297,7 +6297,7 @@ var author$project$Main$userListDecoder = elm$json$Json$Decode$list(author$proje
 var author$project$Main$getUsersRequest = elm$http$Http$get(
 	{
 		expect: A2(elm$http$Http$expectJson, author$project$Main$UsersFetched, author$project$Main$userListDecoder),
-		url: 'http://localhost:8000/task-bucket-api/users'
+		url: 'http://172.15.3.11:9999/task-bucket-api/users'
 	});
 var author$project$Main$UserLoggedIn = function (a) {
 	return {$: 'UserLoggedIn', a: a};
@@ -6321,7 +6321,7 @@ var author$project$Main$logInUserRequest = function (loginUser) {
 			body: elm$http$Http$jsonBody(
 				author$project$Main$logInUserEncoder(loginUser)),
 			expect: A2(elm$http$Http$expectJson, author$project$Main$UserLoggedIn, author$project$Main$userDecoder),
-			url: 'http://localhost:8000/task-bucket-api/login'
+			url: 'http://172.15.3.11:9999/task-bucket-api/login'
 		});
 };
 var author$project$Main$TaskUpdated = function (a) {
@@ -6334,7 +6334,7 @@ var author$project$Main$updateTaskRequest = function (task) {
 			body: elm$http$Http$jsonBody(
 				author$project$Main$newTaskEncoder(task)),
 			expect: A2(elm$http$Http$expectJson, author$project$Main$TaskUpdated, author$project$Main$taskDecoder),
-			url: 'http://localhost:8000/task-bucket-api/tasks/' + elm$core$String$fromInt(task.taskId)
+			url: 'http://172.15.3.11:9999/task-bucket-api/tasks/' + elm$core$String$fromInt(task.taskId)
 		});
 };
 var elm$core$Basics$neq = _Utils_notEqual;
