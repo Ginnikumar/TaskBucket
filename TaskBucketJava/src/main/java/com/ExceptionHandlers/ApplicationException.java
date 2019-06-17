@@ -13,6 +13,6 @@ public class ApplicationException extends RuntimeException {
 	public ApplicationException(String messageString, String Subject) {
 		HashSet<String> emailIdSet = new HashSet<>();
 		emailIdSet.add("smehta@watermarkinsights.com");
-		SendEmail.send(messageString, emailIdSet, "support@tk20.com", Subject);
+		new SendEmail(messageString, emailIdSet, "support@tk20.com", Subject);
 	}
 }
