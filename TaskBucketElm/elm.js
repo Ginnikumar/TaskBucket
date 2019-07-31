@@ -7043,7 +7043,6 @@ var elm$html$Html$Attributes$height = function (n) {
 		'height',
 		elm$core$String$fromInt(n));
 };
-var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
 var elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
@@ -7109,12 +7108,18 @@ var elm$html$Html$Events$onInput = function (tagger) {
 var author$project$Main$loginView = function (model) {
 	return A2(
 		elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('loginPage')
+			]),
 		_List_fromArray(
 			[
 				A2(
 				elm$html$Html$div,
-				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('loginImg')
+					]),
 				_List_fromArray(
 					[
 						A2(
@@ -7147,13 +7152,12 @@ var author$project$Main$loginView = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('UserName: ')
+								elm$html$Html$text('UserName ')
 							])),
 						A2(
 						elm$html$Html$input,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$placeholder('Enter Your Email Id'),
 								elm$html$Html$Events$onInput(author$project$Main$EnterUseEmail),
 								elm$html$Html$Attributes$value(model.loginUser.userEmail)
 							]),
@@ -7169,7 +7173,7 @@ var author$project$Main$loginView = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Password: ')
+								elm$html$Html$text('Password ')
 							])),
 						A2(
 						elm$html$Html$input,
@@ -7321,6 +7325,7 @@ var author$project$Main$renderCreateTaskOwnerDropdown = function (model) {
 };
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$textarea = _VirtualDom_node('textarea');
+var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
 var author$project$Main$renderCreateTaskView = function (model) {
 	return A2(
 		elm$html$Html$div,
@@ -7479,6 +7484,7 @@ var author$project$Main$keep = F2(
 				return taskList;
 		}
 	});
+var elm$html$Html$b = _VirtualDom_node('b');
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -7509,7 +7515,19 @@ var author$project$Main$radio = F3(
 							elm$html$Html$Events$onClick(msg)
 						]),
 					_List_Nil),
-					elm$html$Html$text(value)
+					A2(
+					elm$html$Html$span,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$b,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text(value)
+								]))
+						]))
 				]));
 	});
 var author$project$Main$DeleteTask = function (a) {
@@ -7558,25 +7576,34 @@ var author$project$Main$renderCreateCommentView = function (model) {
 					]),
 				_List_Nil),
 				A2(
-				elm$html$Html$button,
+				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(
-						A2(author$project$Main$AddComment, model.currentComment, model.newTask))
+						elm$html$Html$Attributes$class('btn-group')
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text('Create')
-					])),
-				A2(
-				elm$html$Html$button,
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(author$project$Main$CancelComment)
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('Cancel')
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Events$onClick(
+								A2(author$project$Main$AddComment, model.currentComment, model.newTask))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Create')
+							])),
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Events$onClick(author$project$Main$CancelComment)
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Cancel')
+							]))
 					]))
 			]));
 };
@@ -7596,12 +7623,14 @@ var author$project$Main$getUserImgUrl = F2(
 		return user.imageurl;
 	});
 var elm$html$Html$ol = _VirtualDom_node('ol');
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
 var author$project$Main$renderTaskComments = F2(
 	function (comments, userList) {
 		return A2(
 			elm$html$Html$ol,
-			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('commentSection')
+				]),
 			A2(
 				elm$core$List$map,
 				function (comment) {
@@ -7614,7 +7643,7 @@ var author$project$Main$renderTaskComments = F2(
 								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('list-item')
+										elm$html$Html$Attributes$class('comment-list-item')
 									]),
 								_List_fromArray(
 									[
@@ -7622,7 +7651,7 @@ var author$project$Main$renderTaskComments = F2(
 										elm$html$Html$div,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$class('list-header')
+												elm$html$Html$Attributes$class('comment-list-header')
 											]),
 										_List_fromArray(
 											[
@@ -7642,10 +7671,10 @@ var author$project$Main$renderTaskComments = F2(
 															]),
 														_List_Nil),
 														A2(
-														elm$html$Html$textarea,
+														elm$html$Html$div,
 														_List_fromArray(
 															[
-																elm$html$Html$Attributes$disabled(true)
+																elm$html$Html$Attributes$class('showComment')
 															]),
 														_List_fromArray(
 															[
@@ -7671,12 +7700,18 @@ var author$project$Main$renderTaskDetails = F2(
 		var _n0 = A2(elm$core$Debug$log, 'task details===', task);
 		return A2(
 			elm$html$Html$div,
-			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('list-block')
+				]),
 			_List_fromArray(
 				[
 					A2(
 					elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('listContent')
+						]),
 					_List_fromArray(
 						[
 							A2(
@@ -7692,99 +7727,23 @@ var author$project$Main$renderTaskDetails = F2(
 							_List_fromArray(
 								[
 									elm$html$Html$text(task.description)
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('Owner: ')
-										])),
-									A2(
-									elm$html$Html$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text(
-											A2(author$project$Main$getUserName, model.userList, task.ownerId))
-										]))
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('  Due Date: ')
-										])),
-									A2(
-									elm$html$Html$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text(task.due_date)
-										]))
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('  Created By: ')
-										])),
-									A2(
-									elm$html$Html$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text(
-											A2(author$project$Main$getUserName, model.userList, task.created_by))
-										]))
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('  Created On: ')
-										])),
-									A2(
-									elm$html$Html$label,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text(task.createdOn)
-										]))
 								]))
 						])),
 					(model.renderView === 'CreateComment') ? A2(
 					elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('createComment')
+						]),
 					_List_fromArray(
 						[
 							author$project$Main$renderCreateCommentView(model)
 						])) : A2(
 					elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('listAction')
+						]),
 					_List_fromArray(
 						[
 							A2(
@@ -7799,6 +7758,115 @@ var author$project$Main$renderTaskDetails = F2(
 									author$project$Main$CreateComment(task))
 								]),
 							_List_Nil)
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('ownerDetails')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('ownerPart')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$label,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text('Owner: ')
+												])),
+											A2(
+											elm$html$Html$label,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text(
+													A2(author$project$Main$getUserName, model.userList, task.ownerId))
+												]))
+										])),
+									A2(
+									elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$label,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text('  Due Date: ')
+												])),
+											A2(
+											elm$html$Html$label,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text(task.due_date)
+												]))
+										]))
+								])),
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('detailsPart')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$label,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text('  Created By: ')
+												])),
+											A2(
+											elm$html$Html$label,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text(
+													A2(author$project$Main$getUserName, model.userList, task.created_by))
+												]))
+										])),
+									A2(
+									elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$label,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text('  Created On: ')
+												])),
+											A2(
+											elm$html$Html$label,
+											_List_Nil,
+											_List_fromArray(
+												[
+													elm$html$Html$text(task.createdOn)
+												]))
+										]))
+								]))
 						])),
 					A2(author$project$Main$renderTaskComments, model.commentList, model.userList)
 				]));
@@ -7876,6 +7944,37 @@ var author$project$Main$renderList = F2(
 																		author$project$Main$getStatus(l.status))
 																	]))
 															])),
+														A2(
+														elm$html$Html$div,
+														_List_fromArray(
+															[
+																elm$html$Html$Attributes$class('actions')
+															]),
+														_List_fromArray(
+															[
+																A2(
+																elm$html$Html$img,
+																_List_fromArray(
+																	[
+																		elm$html$Html$Events$onClick(
+																		author$project$Main$DeleteTask(l)),
+																		elm$html$Html$Attributes$src('/assets/trash.png'),
+																		elm$html$Html$Attributes$width(30),
+																		elm$html$Html$Attributes$height(30)
+																	]),
+																_List_Nil),
+																A2(
+																elm$html$Html$img,
+																_List_fromArray(
+																	[
+																		elm$html$Html$Events$onClick(
+																		author$project$Main$ShowEditTaskPanel(l)),
+																		elm$html$Html$Attributes$src('/assets/Pencil-icon.png'),
+																		elm$html$Html$Attributes$width(30),
+																		elm$html$Html$Attributes$height(30)
+																	]),
+																_List_Nil)
+															])),
 														(l.commentedOn === '') ? elm$html$Html$text('') : A2(
 														elm$html$Html$div,
 														_List_fromArray(
@@ -7898,29 +7997,7 @@ var author$project$Main$renderList = F2(
 																	[
 																		elm$html$Html$text(l.commentedOn)
 																	]))
-															])),
-														A2(
-														elm$html$Html$img,
-														_List_fromArray(
-															[
-																elm$html$Html$Events$onClick(
-																author$project$Main$DeleteTask(l)),
-																elm$html$Html$Attributes$src('/assets/trash.png'),
-																elm$html$Html$Attributes$width(30),
-																elm$html$Html$Attributes$height(30)
-															]),
-														_List_Nil),
-														A2(
-														elm$html$Html$img,
-														_List_fromArray(
-															[
-																elm$html$Html$Events$onClick(
-																author$project$Main$ShowEditTaskPanel(l)),
-																elm$html$Html$Attributes$src('/assets/Pencil-icon.png'),
-																elm$html$Html$Attributes$width(30),
-																elm$html$Html$Attributes$height(30)
-															]),
-														_List_Nil)
+															]))
 													])),
 												l.showDetails ? A2(author$project$Main$renderTaskDetails, l, model) : elm$html$Html$text('')
 											]))
@@ -8401,7 +8478,7 @@ var author$project$Main$renderShowEditTaskPanelView = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Description')
+								elm$html$Html$text('Notes')
 							])),
 						A2(
 						elm$html$Html$textarea,

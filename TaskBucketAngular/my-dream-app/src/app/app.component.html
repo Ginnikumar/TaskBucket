@@ -1,0 +1,15 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center">
+  <h1>
+    Welcome to {{ title }}!
+  </h1>
+  <input #action (keyup)="updateElement(action.value)" (blur)="updateElement(action.value)"/>
+  <ul>
+    <li *ngFor="let student of studentsObservable" >
+        id: {{student.id}}
+        title: {{student.title}}
+    </li>
+  </ul>
+</div>
+
+
