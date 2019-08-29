@@ -1,0 +1,1 @@
+web: java -Ddebug=false -Dserver.port=5000 -Dspring.data.jpa.repositories.enabled=false -Ddatabase.IP=database-1.cbs0rntl753j.ap-south-1.rds.amazonaws.com -jar taskbucket.jar
